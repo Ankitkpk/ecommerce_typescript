@@ -1,60 +1,64 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Model } from "mongoose";
 
-// Define the types for delivery details and cart items
-type DeliveryDetails = {
-  email: string;
-  name: string;
+export interface IOrderItem {
+  qty: number;
+  price: number;
+  product: mongoose.Types.ObjectId;
+}
+
+export interface IShippingAddress {
   address: string;
   city: string;
-};
+}
 
-type CartItems = {
-  _id: string;
-  name: string;
-  image: string;
-  price: number;
-  quantity: number;
-};
 
-interface IOrder extends Document {
-  user: mongoose.Schema.Types.ObjectId;  
-  resturant: mongoose.Schema.Types.ObjectId;  
-  deliveryDetails: DeliveryDetails; 
-  cartItems: CartItems[]; 
-  totalAmount: number;
-  status: "pending" | "confirmed" | "outfordelivery" | "delivered";
-  createdAt?: Date; 
-  updatedAt?: Date; 
+export type OrderStatus = "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled";
+
+export interface IOrder extends Document {
+  orderItems: IOrderItem[];
+  shippingAddress: IShippingAddress;
+  paymentMethod: string;
+  shippingPrice: number;
+  totalPrice: number;
+  user: mongoose.Types.ObjectId;
+  status: OrderStatus;
 }
 
 const orderSchema: Schema<IOrder> = new Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    resturant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true },
-    deliveryDetails: {
-      email: { type: String, required: true },
-      name: { type: String, required: true },
-      city:{type:String , required:true},
-      address: { type: String, required: true }
-    },
-    //since many cartItems will be theirfore array//
-    cartItems: [
+    orderItems: [
       {
-        _id: { type: String, required: true },
-        name: { type: String, required: true },
-        image: { type: String, required: true },
+        qty: { type: Number, required: true },
         price: { type: Number, required: true },
-        quantity: { type: Number, required: true }
-      }
+        product: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+      },
     ],
-    totalAmount: { type: Number, required: true },
-    status: { type: String, enum: ["pending", "confirmed", "outfordelivery", "delivered"], default: "pending" }
+    shippingAddress: {
+      address: { type: String, required: true },
+      city: { type: String, required: true },
+    },
+    paymentMethod: { type: String, required: true },
+    shippingPrice: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    status: {
+      type: String,
+      default: "Pending",
+      enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
+    },
   },
   {
-    timestamps: true, 
+    timestamps: true,
   }
 );
 
-const Order = mongoose.model<IOrder>('Order', orderSchema);
-
+const Order: Model<IOrder> = mongoose.model<IOrder>("Order", orderSchema);
 export default Order;
