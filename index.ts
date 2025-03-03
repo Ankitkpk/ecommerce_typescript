@@ -2,13 +2,15 @@ import express from "express";
 import { config } from "dotenv";
 import connectDB from "./config/db";
 import cookieParser from "cookie-parser"; 
-
+import { notFound, ErrHandler } from  "./middleware/errorHandler"; 
 config(); 
 
 const app = express();
 
 app.use(express.json({ limit: "10mb" })); 
 app.use(express.urlencoded({ extended: true, limit: "10mb" })); 
+app.use(notFound);
+app.use(ErrHandler);
 app.use(cookieParser()); 
 
 const PORT = process.env.PORT || 3000;
