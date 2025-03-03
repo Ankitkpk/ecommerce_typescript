@@ -1,3 +1,4 @@
+
 import mongoose, { Document, Schema, Model } from "mongoose";
 
 // Define Blog Interface
