@@ -2,27 +2,28 @@ import nodemailer from 'nodemailer';
 import { Request, Response, NextFunction } from 'express';
 
 type MailOptions={
+    from:string,
     to:string,
     subject:string,
     text:string
 }
 
-export const sendMail = async ({ to, subject, text }: MailOptions) => {
+export const sendMail = async ({ from, to, subject, text }: MailOptions) => {
     try {
         const transporter = nodemailer.createTransport({
             service: 'gmail',
             auth: {
                 type: 'OAuth2',
-                user: process.env.EMAIL as string,
-                clientId: process.env.CLIENT_ID as string,
-                clientSecret: process.env.CLIENT_SECRET as string,
-                refreshToken: process.env.REFRESH_TOKEN as string,
-                accessToken: process.env.ACCESS_TOKEN as string,
+                user: process.env.EMAIL!,  // Using '!'
+                clientId: process.env.CLIENT_ID!,
+                clientSecret: process.env.CLIENT_SECRET!,
+                refreshToken: process.env.REFRESH_TOKEN!,
+                accessToken: process.env.ACCESS_TOKEN!,
             },
         });
 
         const mailOptions = {
-            from: process.env.EMAIL as string,
+            from: process.env.EMAIL!,
             to,
             subject,
             text,

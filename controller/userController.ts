@@ -234,7 +234,7 @@ export const forgetPasswordToken = async (req: Request, res: Response) => {
         const token = user.createPasswordResetToken();
         await user.save();
         await sendMail({
-            from: process.env.EMAIL,
+           from: process.env.EMAIL!,
             to: to,
             subject: 'Reset Password',
             text: `Use the following link to reset your password ${process.env.TEST_URL}/reset-password/${token}`
