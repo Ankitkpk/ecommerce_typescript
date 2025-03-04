@@ -15,7 +15,6 @@ declare global {
     }
   }
 
-/* set req.user to the authenticated user */
 export const authMiddleware = async (req:Request, res: Response, next: NextFunction) => {
     if (req.headers.authorization?.startsWith('Bearer')) {
         const token = req.headers.authorization.split(' ')[1];

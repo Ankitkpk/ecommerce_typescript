@@ -4,6 +4,7 @@ import User from "../models/userModel";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import validateId from "../utils/validateObjectId";
+import {sendMail} from '../utils/sendMail';
 import { config } from "dotenv";
 config(); 
 
@@ -12,13 +13,6 @@ type DecodedToken = {
     id: string;
 };
 
-declare global {
-  namespace Express{
-      interface Request {
-          user:any;
-      }
-  }
-}
 
 const generateToken =(id:string): string => {
   const secret = process.env.JWT_SECRET;
