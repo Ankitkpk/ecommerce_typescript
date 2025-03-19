@@ -16,6 +16,7 @@ const PORT = process.env.PORT || 3000;
 connectDB();
 app.post('/admin' , adminRoutes);
 app.post('/login', userRoutes);
+app.post('/register',userRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
