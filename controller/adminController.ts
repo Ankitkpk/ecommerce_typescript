@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { createAdmin, findAdmin } from "../service/admin";
-import { comparePassword, hashPassword } from "../middleware/hashedPassword";
+import { createAdmin , findAdmin } from "../service/admin";
+import { comparePassword, hashPassword } from "../middleware/hassedPassword";
 import { createToken, verifyToken } from "../middleware/token";
-import { isBlocked, trackFailedLogin, resetLoginAttempts } from "../utile/LoginAttempts";
+import { isBlocked, trackFailedLogin, resetLoginAttempts } from "../utils/LogginAttemp";
 import nodemailer from "nodemailer";
 
 export const signupAdmin = async(req: Request, res: Response): Promise<Response> =>{
