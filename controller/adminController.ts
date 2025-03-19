@@ -5,7 +5,7 @@ import { createToken, verifyToken } from "../middleware/token";
 import { isBlocked, trackFailedLogin, resetLoginAttempts } from "../utils/LogginAttemp";
 import nodemailer from "nodemailer";
 
-export const signupAdmin = async(req: Request, res: Response): Promise<Response> =>{
+export const signupAdmin = async(req: Request, res: Response): Promise<any> =>{
     try {
         const {username, email, password, role} = req.body;
         if(!username && !email && !password){
@@ -34,7 +34,7 @@ export const signupAdmin = async(req: Request, res: Response): Promise<Response>
 
 
 
-export const loginAdmin = async (req: Request, res: Response): Promise<Response> => {
+export const loginAdmin = async (req: Request, res: Response): Promise<any> => {
     try {
         const { email, password } = req.body;
 
@@ -86,7 +86,7 @@ export const loginAdmin = async (req: Request, res: Response): Promise<Response>
 
 
 
-export const forgetPassword = async(req: Request, res: Response): Promise<Response> =>{
+export const forgetPassword = async(req: Request, res: Response): Promise<any> =>{
     const email = req.body.email;
     try {
       if(!email){
@@ -118,7 +118,7 @@ export const forgetPassword = async(req: Request, res: Response): Promise<Respon
     }
   };
   
-  export const resetPassword = async (req: Request, res: Response): Promise<Response> => {
+  export const resetPassword = async (req: Request, res: Response): Promise<any> => {
     const { token } = req.params;
     const { password } = req.body;
 

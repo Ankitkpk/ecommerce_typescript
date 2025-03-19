@@ -1,6 +1,7 @@
 import express from "express";
 import { config } from "dotenv";
 import connectDB from "./config/db";
+import adminRoutes from './routes/adminRoutes';
 import cookieParser from "cookie-parser"; 
 config(); 
 const app = express();
@@ -12,7 +13,7 @@ app.use(cookieParser());
 const PORT = process.env.PORT || 3000;
 
 connectDB();
-
+app.use('/admin' , adminRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
