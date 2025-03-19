@@ -1,12 +1,17 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import User from "../models/userModel";  // Adjust the path as needed
+import User from "../models/userModel";
 
-// JWT Secret Key
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
 
-const Login = async (req: Request, res: Response) => {
+
+const secret = process.env.JWT_SECRET;
+if (!secret) {
+    throw new Error("JWT_SECRET is not defined in the environment variables.");
+}
+
+
+
+export const Login = async (req: Request, res: Response):Promise<any> => {
   try {
     const { email, password } = req.body;
 
@@ -31,8 +36,8 @@ const Login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: JWT_EXPIRES_IN,
+    const token = jwt.sign({ id: user._id, role: user.role }, secret , {
+      expiresIn: '1d',
     });
 
     
