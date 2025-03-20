@@ -5,7 +5,7 @@ import {IUserDocument} from '../models/userModel';
 export const generateToken = (res:Response, user:IUserDocument): string => {
     try {
         const token = Jwt.sign(
-            {},  
+            {userID:user._id , role:user.role},  
             process.env.JWT_SECRET as string, 
             { expiresIn: "1d" } 
         );

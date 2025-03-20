@@ -57,20 +57,16 @@ export const Login = async (req: Request, res: Response): Promise<any> => {
 export const registerUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const { firstName, lastName, email, mobile, password } = req.body;
-
-    // Check if all required fields are present
     if (!firstName || !lastName || !email || !mobile || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
+    const existingUser = await User.findOne({ email }).lean();
     if (existingUser) {
       return res.status(400).json({ message: "User already exists with this email" });
     }
 
-    // Create a new user
-    const newUser = new User({
+    const user = new User({
       firstName,
       lastName,
       email,
@@ -78,32 +74,24 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
       password,
     });
 
-    await newUser.save();
+    await user.save();
 
     // Generate JWT token
-    const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      console.error("JWT_SECRET is not defined in environment variables");
-      return res.status(500).json({ message: "Server error: JWT secret not found" });
-    }
-
-    const token = jwt.sign({ id: newUser._id, role: newUser.role }, secret, {
-      expiresIn: "1d",
-    });
+    const token = generateToken(res, user);
 
     return res.status(201).json({
       message: "User registered successfully",
       token,
       user: {
-        id: newUser._id,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        email: newUser.email,
-        mobile: newUser.mobile,
-        role: newUser.role,
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        mobile: user.mobile,
+        role: user.role,
       },
     });
-  } catch (error: any) {
+  } catch (error:any) {
     console.error("Registration error:", error);
     return res.status(500).json({ message: "Internal server error", error: error.message });
   }
