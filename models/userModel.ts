@@ -15,11 +15,16 @@ interface IUser extends Document {
   isBlocked: boolean;
   cart: { product: mongoose.Types.ObjectId; quantity: number }[];
   wishlist: mongoose.Types.ObjectId[];
-  createPasswordResetToken(): string;
-  isPasswordMatched(password: string): Promise<boolean>;
+
+}
+// Extend IUser with Document to include Mongoose's built-in properties like `_id`
+export interface IUserDocument extends IUser, Document {
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const UserSchema: Schema<IUser> = new Schema(
+
+const UserSchema: Schema<IUserDocument> = new Schema(
   {
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
@@ -63,5 +68,5 @@ UserSchema.methods.isPasswordMatched = async function (password: string): Promis
   return await bcrypt.compare(password, this.password);
 };
 
-const User: Model<IUser> = mongoose.model<IUser>("User", UserSchema);
+const User = mongoose.model<IUserDocument>("User",UserSchema);
 export default User;

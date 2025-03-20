@@ -17,6 +17,7 @@ connectDB();
 app.post('/admin' , adminRoutes);
 app.post('/login', userRoutes);
 app.post('/register',userRoutes);
+app.delete("/deleteUser/:id",userRoutes);
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });

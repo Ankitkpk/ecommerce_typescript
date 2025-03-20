@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
 import bcrypt from "bcrypt";
+import {generateToken} from '../utils/generateToken'
 
 
 const secret = process.env.JWT_SECRET;
@@ -10,37 +11,30 @@ if (!secret) {
 }
 
 
-
-export const Login = async (req: Request, res: Response):Promise<any> => {
+export const Login = async (req: Request, res: Response): Promise<any> => {
   try {
     const { email, password } = req.body;
-
-    // Check if email and password are provided
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
     // Find the user by email
-    const user = await User.findOne({ email });
-
+    const user = await User.findOne({ email }).lean();
+    console.log(user);
     if (!user) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-  
     if (user.isBlocked) {
       return res.status(403).json({ message: "User is blocked" });
     }
-    const isMatch = await user.isPasswordMatched(password);
+
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
+    const token = generateToken(res, user);
 
-    const token = jwt.sign({ id: user._id, role: user.role }, secret , {
-      expiresIn: '1d',
-    });
-
-    
     res.status(200).json({
       message: "Login successful",
       token,
@@ -58,6 +52,7 @@ export const Login = async (req: Request, res: Response):Promise<any> => {
     res.status(500).json({ message: "Internal server error", error });
   }
 };
+
 
 export const registerUser = async (req: Request, res: Response): Promise<any> => {
   try {
@@ -149,8 +144,6 @@ export const updateUser = async (req: Request, res: Response): Promise<any> => {
   try {
     const userId = req.params.id;
     const updateData = req.body;
-
-    // Check if password is being updated
     if (updateData.password) {
       const salt = await bcrypt.genSalt(10);
       updateData.password = await bcrypt.hash(updateData.password, salt);

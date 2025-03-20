@@ -1,15 +1,14 @@
 import Jwt from "jsonwebtoken";
 import { Response } from "express";
-import { IUserDocument } from "../models/userModel";
+import {IUserDocument} from '../models/userModel';
 
-export const generateToken = (res: Response, user:IUserDocument): string => {
+export const generateToken = (res:Response, user:IUserDocument): string => {
     try {
         const token = Jwt.sign(
-            { userId: user._id },  
+            {},  
             process.env.JWT_SECRET as string, 
             { expiresIn: "1d" } 
         );
-
         // Set token in HTTP-only cookie
         res.cookie("token", token, {
             httpOnly: true,
