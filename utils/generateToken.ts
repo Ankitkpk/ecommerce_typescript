@@ -5,8 +5,8 @@ import {IUserDocument} from '../models/userModel';
 export const generateToken = (res:Response, user:IUserDocument): string => {
     try {
         const token = Jwt.sign(
-            {userID:user._id , role:user.role},  
-            process.env.JWT_SECRET as string, 
+            {userId:user._id , userrole:user.role},  
+            process.env.SECRET_KEY as string, 
             { expiresIn: "1d" } 
         );
         // Set token in HTTP-only cookie

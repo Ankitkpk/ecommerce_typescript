@@ -33,11 +33,9 @@ export const Login = async (req: Request, res: Response): Promise<any> => {
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
-    const token = generateToken(res, user);
 
     res.status(200).json({
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         firstName: user.firstName,
@@ -61,7 +59,7 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingUser = await User.findOne({ email }).lean();
+    const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists with this email" });
     }
