@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import User from "../models/userModel";
-
+import bcrypt from "bcrypt";
 
 
 const secret = process.env.JWT_SECRET;
@@ -114,10 +114,57 @@ export const registerUser = async (req: Request, res: Response): Promise<any> =>
   }
 };
 
+export const  getUser = async (req: Request, res: Response): Promise<any> => {
+  try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
+      }
+
+      return res.status(200).json(user);
+  } catch (error) {
+      return res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByIdAndDelete(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    return res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
 
 
+export const updateUser = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const userId = req.params.id;
+    const updateData = req.body;
 
+    // Check if password is being updated
+    if (updateData.password) {
+      const salt = await bcrypt.genSalt(10);
+      updateData.password = await bcrypt.hash(updateData.password, salt);
+    }
 
+    const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
 
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
 
-export default Login;
+    return res.status(200).json({ message: "User updated successfully", user });
+  } catch (error) {
+    return res.status(500).json({ message: "Server Error", error: error.message });
+  }
+};
+
