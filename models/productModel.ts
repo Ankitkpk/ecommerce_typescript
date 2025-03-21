@@ -13,7 +13,7 @@ export interface IProduct extends Document {
   quantity: number;
   slug: string;
   brand?: string;
-  category?: mongoose.Types.ObjectId;
+  category?:string;
   sold: number;
   discount?: number;
   images: string[];
@@ -34,16 +34,16 @@ const ProductSchema: Schema<IProductDocument> = new Schema(
     quantity: { type: Number, required: true },
     slug: { type: String, required: true },
     brand: { type: String },
-    category: { type: Schema.Types.ObjectId, ref: "Category" },
+    category: { type: String, default: "" },
     sold: { type: Number, default: 0 },
     discount: { type: Number, default: 0 },
     images: { type: [String], default: [] },
     totalRatings: { type: Number, default: 0 },
     ratings: [
       {
-        stars: { type: Number, required: true },
+        stars: { type: Number},
         comment: { type: String },
-        postedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+        postedBy: { type: Schema.Types.ObjectId, ref: "User"  },
       },
     ],
   },

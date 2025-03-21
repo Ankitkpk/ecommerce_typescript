@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import bodyParser from "body-parser";
 import connectDB from "./config/db";
 import adminRoutes from './routes/adminRoutes';
+import productRoutes from './routes/productRoutes';
 import userRoutes from   './routes/userRoutes'
 import cookieParser from "cookie-parser"; 
 config(); 
@@ -17,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 
 connectDB();
 app.use("/api/v1/user", userRoutes); 
+app.use("/api/v1/product", productRoutes); 
 app.get('/', (req, res) => {
   res.send('Hello, World!');
 });
