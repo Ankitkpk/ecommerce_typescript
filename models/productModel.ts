@@ -1,6 +1,5 @@
 import mongoose, { Document, Schema, Model } from "mongoose";
 
-
 export interface IRating {
   stars: number;
   comment: string;
@@ -22,7 +21,12 @@ export interface IProduct extends Document {
   ratings: IRating[];
 }
 
-const ProductSchema: Schema<IProduct> = new Schema(
+export interface IProductDocument extends IProduct, Document {
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const ProductSchema: Schema<IProductDocument> = new Schema(
   {
     title: { type: String, trim: true, required: true },
     price: { type: Number, required: true },
@@ -32,19 +36,19 @@ const ProductSchema: Schema<IProduct> = new Schema(
     brand: { type: String },
     category: { type: Schema.Types.ObjectId, ref: "Category" },
     sold: { type: Number, default: 0 },
-    discount: { type: Number },
+    discount: { type: Number, default: 0 },
     images: { type: [String], default: [] },
     totalRatings: { type: Number, default: 0 },
     ratings: [
       {
-        stars: { type: Number },
+        stars: { type: Number, required: true },
         comment: { type: String },
-        postedBy: { type: Schema.Types.ObjectId, ref: "User" },
+        postedBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
       },
     ],
   },
   { timestamps: true }
 );
 
-const Product: Model<IProduct> = mongoose.model<IProduct>("Product", ProductSchema);
+const Product: Model<IProductDocument> = mongoose.model<IProductDocument>("Product", ProductSchema);
 export default Product;
